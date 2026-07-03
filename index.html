@@ -200,8 +200,10 @@ tfoot td.num{font-family:'IBM Plex Mono'}
 .f-2{grid-template-columns:1fr 1fr}
 .f-3{grid-template-columns:1fr 1fr 1fr}
 .f-4{grid-template-columns:1fr 1fr 1fr 1fr}
-.compute-note{font-size:11.5px;color:var(--ink-3);background:var(--surface-2);padding:9px 12px;
-  border-radius:9px;margin-top:4px;display:flex;gap:7px;align-items:flex-start}
+.compute-note{font-size:11px;color:var(--ink-3);padding:4px 2px;
+  margin-top:2px;display:flex;gap:6px;align-items:center;line-height:1.35}
+.compute-note svg{width:13px;height:13px;flex-shrink:0;color:var(--ink-3);opacity:.7}
+.compute-note b{color:var(--ink-2);font-weight:600}
 
 /* sub tabs */
 .subtabs{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:11px;width:max-content;margin-bottom:20px}
@@ -460,7 +462,7 @@ function totals(){
 }
 
 /* ================= ROUTER ================= */
-let VIEW="dashboard", CUR=null, SUBTAB="overview", SEARCH="";
+let VIEW="dashboard", CUR=null, SUBTAB="overview", SEARCH="", CMONTH="";
 const $=id=>document.getElementById(id);
 const content=()=>$('content');
 
@@ -723,16 +725,23 @@ function renderCampaigns(){
   $('topActions').innerHTML=`
     <button class="btn" onclick="exportAllCampaigns()">${ico('download')} ส่งออก</button>
     <button class="btn primary" onclick="openCampaign()">${plusIco()} เพิ่มแคมเปญ</button>`;
-  const list=DB.campaigns.filter(c=>!SEARCH||
-    (c.name||'').toLowerCase().includes(SEARCH)||(c.brand||'').toLowerCase().includes(SEARCH));
+  const monthsAvail=sortMonths([...new Set(DB.campaigns.map(c=>c.month).filter(Boolean))]);
+  const list=DB.campaigns.filter(c=>
+    (!SEARCH||(c.name||'').toLowerCase().includes(SEARCH)||(c.brand||'').toLowerCase().includes(SEARCH)) &&
+    (!CMONTH||c.month===CMONTH));
+  const opt=(v,cur,label)=>`<option value="${v}"${cur===v?' selected':''}>${label}</option>`;
   content().innerHTML=`
     <div class="toolbar">
-      <div class="search">${ico('search')}<input placeholder="ค้นหาแคมเปญ / แบรนด์…" value="${esc(SEARCH)}" oninput="SEARCH=""is.value.toLowerCase();renderCampaigns()"></div>
+      <div class="search">${ico('search')}<input placeholder="ค้นหาแคมเปญ / แบรนด์…" value="${esc(SEARCH)}" oninput="SEARCH=this.value.toLowerCase();renderCampaigns()"></div>
+      <label class="fl">เดือน
+        <select onchange="CMONTH=this.value;renderCampaigns()">
+          ${opt('',CMONTH,'ทั้งหมด')}${monthsAvail.map(mo=>opt(mo,CMONTH,mo)).join('')}
+        </select></label>
       <div class="sp"></div>
       <span class="muted" style="font-size:12.5px">คลิกที่แคมเปญเพื่อดูรายละเอียด KOL, tier &amp; platform</span>
     </div>
     ${list.length? campaignTable(list.slice().reverse(),true)
-      : emptyState('ไม่พบแคมเปญ','ลองปรับคำค้นหา หรือเพิ่มแคมเปญใหม่',
+      : emptyState('ไม่พบแคมเปญ','ลองปรับคำค้นหา/เดือน หรือเพิ่มแคมเปญใหม่',
         `<button class="btn primary" onclick="openCampaign()">${plusIco()} เพิ่มแคมเปญ</button>`)}`;
 }
 
@@ -1034,7 +1043,7 @@ function openCampaign(id){
         <div class="field"><label>Est. Engagement <span class="hint">(เป้า)</span></label>
           <input id="fEstEng" type="number" value="${c.estEngagement??''}" placeholder="0"></div>
       </div>
-      <div class="compute-note">${ico('info')}<div>ยอด <b>จ่ายจริง, Follower, Impression, Engagement</b> จะรวมอัตโนมัติจากรายชื่อ KOL — Cost Saving = Market Rate − จ่ายจริง</div></div>
+      <div class="compute-note">${ico('info')}<div>จ่ายจริง / Follower / Impression / Engagement รวมจากรายชื่อ KOL อัตโนมัติ</div></div>
     </div>
     <div class="modal-f">
       <button class="btn" onclick="closeModal()">ยกเลิก</button>
