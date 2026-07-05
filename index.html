@@ -372,7 +372,7 @@ tfoot td.num{font-family:'IBM Plex Mono'}
       <div id="topActions"></div>
     </div>
     <div class="content" id="content"></div>
-    <div class="ver-tag" id="verTag">build 2026-07-05 · v11</div>
+    <div class="ver-tag" id="verTag">build 2026-07-05 · v12</div>
   </div>
 </div>
 
@@ -1513,7 +1513,7 @@ function openCampaign(id){
       <div class="field" style="margin:2px 0">
         <label>แนบไฟล์ CSV ข้อมูล KOL <span class="hint">(ไม่บังคับ · อัปโหลดพร้อมสร้างแคมเปญ ระบบจะโหลด KOL เข้าให้เลย)</span></label>
         <input type="file" id="fFile" accept=".csv,text/csv" style="font-size:12.5px">
-        <div class="muted" style="font-size:11px;margin-top:5px">รูปแบบตามเทมเพลต — ${c.kols&&c.kols.length?`แคมเปญนี้มี ${c.kols.length} KOL แล้ว (อัปเพิ่มได้)`:'หรือข้ามไปเพิ่ม KOL ในแคมเปญทีหลังก็ได้'}</div>
+        <div class="muted" style="font-size:11px;margin-top:5px">รูปแบบตามเทมเพลต — ${c.kols&&c.kols.length?`แคมเปญนี้มี ${c.kols.length} KOL แล้ว (อัปเพิ่มได้)`:'หรือข้ามไปเพิ่ม KOL ในแคมเปญทีหลังก็ได้'} · <a href="#" onclick="downloadTemplate();return false" style="color:var(--rose);font-weight:600">⬇ ดาวน์โหลดเทมเพลต</a></div>
       </div>
       <div class="compute-note">${ico('info')}<div>จ่ายจริง / Follower / Impression / Engagement รวมจากรายชื่อ KOL อัตโนมัติ</div></div>
     </div>
