@@ -822,6 +822,23 @@ function creatorList(){
 }
 
 const RATE_META={top:{c:'seed',t:'★ น่าจ้างต่อ'},good:{c:'micro',t:'ดี'},ok:{c:'',t:'พิจารณา'}};
+// เกณฑ์ประเมิน: เทียบ ER(Eng/View) และ CPV กับค่ากลางของ "ทุกงาน" ทั้งระบบ (ให้ผลตรงกับหน้า Creator)
+function ratingBenchmark(){
+  const ers=[],cpvs=[];
+  DB.campaigns.forEach(c=>(c.kols||[]).forEach(k=>{
+    if(!(k.name||'').trim())return;const x=kolCalc(k);
+    if(isFinite(x.erViews))ers.push(x.erViews);
+    if(isFinite(x.cpv))cpvs.push(x.cpv);
+  }));
+  ers.sort((a,b)=>a-b);cpvs.sort((a,b)=>a-b);
+  const med=a=>a.length?a[Math.floor(a.length/2)]:NaN;
+  return {mER:med(ers),mCPV:med(cpvs)};
+}
+function rateKol(x,budget,bm){
+  const goodER=isFinite(x.erViews)&&isFinite(bm.mER)&&x.erViews>=bm.mER;
+  const goodCPV=N(budget)===0||(isFinite(x.cpv)&&isFinite(bm.mCPV)&&x.cpv<=bm.mCPV);
+  return (goodER&&goodCPV)?'top':(goodER||goodCPV)?'good':'ok';
+}
 
 function renderCreators(){
   $('pageTitle').textContent='Creator';
@@ -1246,6 +1263,8 @@ function detailPlatform(c,m){
 
 /* ---------- KOL TABLE (page 3) ---------- */
 let KOL_SORT='engagement';
+let KOL_RATE='';
+let KOL_TIER='';
 let KOL_SEL=new Set(), KOL_SEL_CID=null;
 function toggleKolSel(id){KOL_SEL.has(id)?KOL_SEL.delete(id):KOL_SEL.add(id);updBulkBar();}
 function toggleKolSelAll(checked,cid){
@@ -1265,14 +1284,16 @@ function bulkDelKol(cid){
 }
 function detailKol(c,m){
   if(KOL_SEL_CID!==c.id){KOL_SEL.clear();KOL_SEL_CID=c.id;}
-  const kols=(c.kols||[]).map(k=>({...k,_c:kolCalc(k)}));
+  const bm=ratingBenchmark();
+  const kols=(c.kols||[]).map(k=>{const _c=kolCalc(k);return {...k,_c,_rate:rateKol(_c,k.budget,bm)};});
   // ranking maps
   const byEng=[...kols].sort((a,b)=>b._c.engagement-a._c.engagement);
   const byView=[...kols].sort((a,b)=>N(b.views)-N(a.views));
   const rkEng=new Map(byEng.map((k,i)=>[k.id,i+1]));
   const rkView=new Map(byView.map((k,i)=>[k.id,i+1]));
-  // apply sort
-  const sorted=[...kols].sort((a,b)=>{
+  // filter by rating + tier, then apply sort
+  const filtered = kols.filter(k=>(!KOL_RATE||k._rate===KOL_RATE)&&(!KOL_TIER||k._c.tier===KOL_TIER));
+  const sorted=[...filtered].sort((a,b)=>{
     if(KOL_SORT==='engagement')return b._c.engagement-a._c.engagement;
     if(KOL_SORT==='views')return N(b.views)-N(a.views);
     if(KOL_SORT==='er')return (b._c.erViews||0)-(a._c.erViews||0);
@@ -1296,6 +1317,18 @@ function detailKol(c,m){
         <option value="cpe"${KOL_SORT==='cpe'?' selected':''}>CPE (ถูกสุด)</option>
         <option value="budget"${KOL_SORT==='budget'?' selected':''}>งบ</option>
       </select></label>
+    <label class="muted" style="font-size:12.5px;margin-left:10px">ประเมิน
+      <select onchange="KOL_RATE=this.value;renderDetail()" style="margin-left:6px;padding:6px 10px;border:1px solid var(--line-2);border-radius:8px">
+        <option value=""${KOL_RATE===''?' selected':''}>ทั้งหมด</option>
+        <option value="top"${KOL_RATE==='top'?' selected':''}>★ น่าจ้างต่อ</option>
+        <option value="good"${KOL_RATE==='good'?' selected':''}>ดี</option>
+        <option value="ok"${KOL_RATE==='ok'?' selected':''}>พิจารณา</option>
+      </select></label>
+    <label class="muted" style="font-size:12.5px;margin-left:10px">Tier
+      <select onchange="KOL_TIER=this.value;renderDetail()" style="margin-left:6px;padding:6px 10px;border:1px solid var(--line-2);border-radius:8px">
+        <option value=""${KOL_TIER===''?' selected':''}>ทั้งหมด</option>
+        ${TIERS.map(t=>`<option value="${t.k}"${KOL_TIER===t.k?' selected':''}>${t.label}</option>`).join('')}
+      </select></label>
   </div>`;
 
   if(!kols.length){$('subContent').innerHTML=head+`
@@ -1316,6 +1349,7 @@ function detailKol(c,m){
       ? `<a href="${esc(k.link)}" target="_blank" rel="noopener" class="klink">${esc(k.name||'—')} ↗</a>`
       : esc(k.name||'—'));
     const kt=k.kolType||'KOL';
+    const rm=RATE_META[k._rate]||RATE_META.ok;
     return `<tr>
       <td><input type="checkbox" class="kol-chk" ${KOL_SEL.has(k.id)?'checked':''} onchange="toggleKolSel('${k.id}')"></td>
       <td>${rankBadge(re)}</td>
@@ -1340,6 +1374,7 @@ function detailKol(c,m){
       <td class="num">${isFinite(x.viewRate)?pct(x.viewRate,1):'—'}</td>
       <td class="num">${isFinite(x.cpv)?baht(x.cpv,2):'—'}</td>
       <td class="num">${isFinite(x.cpc)?baht(x.cpc,2):'—'}</td>
+      <td><span class="chip ${rm.c}" style="white-space:nowrap">${rm.t}</span></td>
       <td class="row-act">
         <button class="icon-btn" onclick="openKol('${c.id}','${k.id}')">${ico('edit')}</button>
         <button class="icon-btn del" onclick="delKol('${c.id}','${k.id}')">${ico('trash')}</button></td>
@@ -1347,7 +1382,7 @@ function detailKol(c,m){
 
   // footer totals
   let tf=0,tv=0,tl=0,tc=0,ts=0,tsv=0,teng=0,tb=0;
-  kols.forEach(k=>{tf+=N(k.follower);tv+=N(k.views);tl+=N(k.likes);tc+=N(k.comments);
+  filtered.forEach(k=>{tf+=N(k.follower);tv+=N(k.views);tl+=N(k.likes);tc+=N(k.comments);
     ts+=N(k.shares);tsv+=N(k.saves);teng+=k._c.engagement;tb+=N(k.budget);});
   const fER=tf?teng/tf*100:NaN,fCPV=tv?tb/tv:NaN,fCPC=teng?tb/teng:NaN,fVR=tf?tv/tf*100:NaN,fERv=tv?teng/tv*100:NaN;
 
@@ -1366,16 +1401,16 @@ function detailKol(c,m){
         <th class="num">Follower</th><th class="num">Views/Imp</th>
         <th class="num">Likes</th><th class="num">Cmt</th><th class="num">Share</th><th class="num">Save</th>
         <th class="num">Engage</th><th class="num">ER/Fol</th><th class="num">ER/View</th>
-        <th class="num">View Rate</th><th class="num">CPV</th><th class="num">CPE</th><th></th>
+        <th class="num">View Rate</th><th class="num">CPV</th><th class="num">CPE</th><th>ประเมิน</th><th></th>
       </tr></thead>
-      <tbody>${rows}</tbody>
+      <tbody>${rows||`<tr><td colspan="21" style="text-align:center;padding:24px;color:var(--ink-3)">ไม่พบ KOL ตามตัวกรอง</td></tr>`}</tbody>
       <tfoot><tr>
-        <td></td><td></td><td></td><td>รวม ${kols.length} ราย</td><td></td><td></td>
+        <td></td><td></td><td></td><td>รวม ${filtered.length} ราย</td><td></td><td></td>
         <td class="num">${baht(tb)}</td><td class="num">${fmt(tf)}</td><td class="num">${fmt(tv)}</td>
         <td class="num">${fmt(tl)}</td><td class="num">${fmt(tc)}</td><td class="num">${fmt(ts)}</td><td class="num">${fmt(tsv)}</td>
         <td class="num">${fmt(teng)}</td><td class="num">${isFinite(fER)?pct(fER,2):'—'}</td>
         <td class="num">${isFinite(fERv)?pct(fERv,2):'—'}</td><td class="num">${isFinite(fVR)?pct(fVR,1):'—'}</td>
-        <td class="num">${isFinite(fCPV)?baht(fCPV,2):'—'}</td><td class="num">${isFinite(fCPC)?baht(fCPC,2):'—'}</td><td></td>
+        <td class="num">${isFinite(fCPV)?baht(fCPV,2):'—'}</td><td class="num">${isFinite(fCPC)?baht(fCPC,2):'—'}</td><td></td><td></td>
       </tr></tfoot>
     </table></div>
     <div class="tag-legend">
@@ -1766,12 +1801,12 @@ function downloadTemplate(){
     ['@nano_koc','TikTok','KOC Seeding','Video','Barter','0','8500','4200','160','12','5','3',''],
     ['@yt_review','YouTube','KOL','Live','Konvy Credit','12000','240000','52000','2100','340','120','80','https://youtube.com/@yt_review']]);
   toast('ดาวน์โหลดเทมเพลต (มีตัวอย่าง) แล้ว');}
-function exportKol(cid){const c=DB.campaigns.find(x=>x.id===cid);
-  const rows=[['Member ID','ชื่อ KOL','แพลตฟอร์ม','ประเภท KOL','ประเภทงาน','ประเภทการจ่ายเงิน','Tier','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','Engagement','ER/Follower%','ER/View%','CPV','CPE','ลิงก์งาน']];
+function exportKol(cid){const c=DB.campaigns.find(x=>x.id===cid);const bm=ratingBenchmark();
+  const rows=[['Member ID','ชื่อ KOL','แพลตฟอร์ม','ประเภท KOL','ประเภทงาน','ประเภทการจ่ายเงิน','Tier','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','Engagement','ER/Follower%','ER/View%','CPV','CPE','ประเมิน','ลิงก์งาน']];
   (c.kols||[]).forEach(k=>{const x=kolCalc(k);
     rows.push([k.memberId||'',k.name,k.platform,k.kolType||'KOL',k.contentType||'',k.paymentType,x.tier,k.budget,k.follower,k.views,k.likes,k.comments,k.shares,k.saves,
       x.engagement,isFinite(x.erFollower)?x.erFollower.toFixed(2):'',isFinite(x.erViews)?x.erViews.toFixed(2):'',
-      isFinite(x.cpv)?x.cpv.toFixed(2):'',isFinite(x.cpc)?x.cpc.toFixed(2):'',k.link||'']);});
+      isFinite(x.cpv)?x.cpv.toFixed(2):'',isFinite(x.cpc)?x.cpc.toFixed(2):'',RATE_META[rateKol(x,k.budget,bm)].t,k.link||'']);});
   downloadCSV(`KOL_${(c.name||'campaign').replace(/\s+/g,'_')}.csv`,rows);toast('ส่งออก CSV แล้ว');}
 function exportAllCampaigns(){
   if(!DB.campaigns.length){toast('ยังไม่มีข้อมูล');return;}
