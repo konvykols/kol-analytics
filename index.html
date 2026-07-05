@@ -505,10 +505,11 @@ function totals(){
     kols+=m.count; follower+=m.totFollower; views+=m.totViews; eng+=m.totEng;
     paid+=m.actualPaid; market+=m.marketRate; estImp+=m.estImp; estEng+=m.estEng;
     const mo=c.month||'—';
-    if(!byMonth[mo])byMonth[mo]={paid:0,market:0,eng:0,views:0,estImp:0,estEng:0};
+    if(!byMonth[mo])byMonth[mo]={paid:0,market:0,eng:0,views:0,estImp:0,estEng:0,count:0};
     byMonth[mo].paid+=m.actualPaid; byMonth[mo].market+=m.marketRate;
     byMonth[mo].eng+=m.totEng; byMonth[mo].views+=m.totViews;
     byMonth[mo].estImp+=m.estImp; byMonth[mo].estEng+=m.estEng;
+    byMonth[mo].count+=m.count;
     Object.entries(m.byPlat).forEach(([k,v])=>{
       if(!byPlat[k])byPlat[k]={count:0,follower:0,views:0,eng:0};
       byPlat[k].count+=v.count; byPlat[k].follower+=v.follower;
@@ -608,8 +609,8 @@ function renderDashboard(){
         <div class="chart-wrap sm"><canvas id="chEng"></canvas></div>
       </div>
       <div class="card pad">
-        <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>สัดส่วน Follower ตามแพลตฟอร์ม</div>
-        <div class="chart-wrap sm"><canvas id="chPlat"></canvas></div>
+        <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>จำนวน KOL ที่ใช้ต่อเดือน</div>
+        <div class="chart-wrap sm"><canvas id="chKolMonth"></canvas></div>
       </div>
     </div>
 
@@ -620,8 +621,43 @@ function renderDashboard(){
         <button class="btn sm" onclick="go('campaigns')">ดูทั้งหมด →</button>
       </div>
       ${campaignTable(DB.campaigns.slice().reverse().slice(0,8))}
+    </div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:18px">
+      <div class="card pad">
+        <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>สัดส่วน Follower ตามแพลตฟอร์ม</div>
+        <div class="chart-wrap sm"><canvas id="chPlat"></canvas></div>
+      </div>
+      <div class="card pad">
+        <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>จำนวน Content ตามแพลตฟอร์ม</div>
+        <div class="chart-wrap sm"><canvas id="chContent"></canvas></div>
+      </div>
     </div>`;
-  drawEstActual('chImp',t.byMonth,'imp'); drawEstActual('chEng',t.byMonth,'eng'); drawPlatChart(t.byPlat);
+  drawEstActual('chImp',t.byMonth,'imp'); drawEstActual('chEng',t.byMonth,'eng');
+  drawKolMonthChart(t.byMonth); drawPlatChart(t.byPlat); drawContentChart(t.byPlat);
+}
+
+function drawKolMonthChart(byMonth){
+  kill('chKolMonth');const ctx=$('chKolMonth');if(!ctx)return;
+  const labels=sortMonths(Object.keys(byMonth));
+  charts.chKolMonth=new Chart(ctx,{type:'bar',
+    data:{labels,datasets:[{label:'จำนวน KOL/KOC',data:labels.map(l=>byMonth[l].count),
+      backgroundColor:'#29D494',borderRadius:6,barPercentage:.6}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+' ราย'}}},
+      scales:{y:{beginAtZero:true,ticks:{precision:0},grid:{color:'#EEEEF5'}},x:{grid:{display:false}}}}});
+}
+function drawContentChart(byPlat){
+  kill('chContent');const ctx=$('chContent');if(!ctx)return;
+  const ks=Object.keys(byPlat);
+  if(!ks.length){ctx.parentElement.innerHTML='<div class="empty" style="padding:30px">ยังไม่มีข้อมูล</div>';return;}
+  const sorted=ks.map(k=>({k,v:byPlat[k].count})).sort((a,b)=>b.v-a.v);
+  charts.chContent=new Chart(ctx,{type:'bar',
+    data:{labels:sorted.map(s=>s.k),datasets:[{label:'จำนวน Content',data:sorted.map(s=>s.v),
+      backgroundColor:sorted.map((_,i)=>PAL[i%PAL.length]),borderRadius:6,barPercentage:.66}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' ชิ้น'}}},
+      scales:{x:{beginAtZero:true,ticks:{precision:0},grid:{color:'#EEEEF5'}},y:{grid:{display:false}}}}});
 }
 
 function achBadge(v){
