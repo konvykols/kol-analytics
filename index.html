@@ -71,6 +71,9 @@ a{color:var(--rose);text-decoration:none}
 .btn.danger:hover{filter:brightness(.94)}
 .klink{color:var(--rose-d);text-decoration:none;font-weight:600}
 .klink:hover{text-decoration:underline}
+.mid{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+  color:var(--ink-3);background:var(--surface-2);border:1px solid var(--line-2);
+  border-radius:6px;padding:0 5px;margin-right:5px;vertical-align:middle;white-space:nowrap}
 .kol-chk{width:15px;height:15px;cursor:pointer;accent-color:var(--rose)}
 .sel-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:12px;
   background:var(--rose-t);border:1px solid var(--rose);border-radius:10px;font-size:13px;color:var(--ink)}
@@ -158,6 +161,12 @@ a{color:var(--rose);text-decoration:none}
 
 .chart-wrap{position:relative;height:250px}
 .chart-wrap.sm{height:210px}
+.plat-legend{display:flex;flex-wrap:wrap;gap:7px 16px;margin-top:12px;justify-content:center}
+.pl-item{display:flex;align-items:center;gap:7px;font-size:11.5px;line-height:1}
+.pl-ic{display:inline-flex;flex-shrink:0}
+.pl-ic svg{display:block;border-radius:5px}
+.pl-nm{color:var(--ink);font-weight:500}
+.pl-pc{color:var(--ink-3);font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;font-size:11px}
 
 /* ---------- Table ---------- */
 .tbl-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--line);background:var(--surface)}
@@ -397,7 +406,7 @@ const PLATFORMS=[
 const PAYTYPES=[
   {k:'Barter',cls:'barter',short:'Barter'},
   {k:'เงินสด',cls:'cash',short:'เงินสด'},
-  {k:'Konvy Credit',cls:'credit',short:'Credit'}
+  {k:'Konvy Credit',cls:'credit',short:'Konvy Credit'}
 ];
 const KOLTYPES=[{k:'KOL'},{k:'KOC Seeding'}];
 const CONTENT_TYPES=['Photo Album','Video','Live'];
@@ -647,6 +656,7 @@ function renderDashboard(){
       <div class="card pad">
         <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>สัดส่วน Follower ตามแพลตฟอร์ม</div>
         <div class="chart-wrap sm"><canvas id="chPlat"></canvas></div>
+        <div id="platLegend" class="plat-legend"></div>
       </div>
       <div class="card pad">
         <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>จำนวน Content ตามแพลตฟอร์ม</div>
@@ -703,12 +713,14 @@ function drawContentChart(byPlat){
   if(!ks.length){ctx.parentElement.innerHTML='<div class="empty" style="padding:30px">ยังไม่มีข้อมูล</div>';return;}
   const sorted=ks.map(k=>({k,v:byPlat[k].count})).sort((a,b)=>b.v-a.v);
   const tot=sorted.reduce((s,x)=>s+x.v,0)||1;
+  const names=sorted.map(s=>s.k);
   charts.chContent=new Chart(ctx,{type:'bar',
     data:{labels:sorted.map(s=>`${s.k} (${(s.v/tot*100).toFixed(0)}%)`),datasets:[{label:'จำนวน Content',data:sorted.map(s=>s.v),
-      backgroundColor:sorted.map((_,i)=>PAL[i%PAL.length]),borderRadius:6,barPercentage:.66}]},
+      backgroundColor:names.map(platColor),borderRadius:6,barPercentage:.66}]},
     options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x+' Content · '+(c.parsed.x/tot*100).toFixed(0)+'%'}}},
-      scales:{x:{beginAtZero:true,ticks:{precision:0},grid:{color:'#EEEEF5'}},y:{grid:{display:false}}}}});
+      scales:{x:{beginAtZero:true,ticks:{precision:0},grid:{color:'#EEEEF5'}},y:{grid:{display:false},ticks:{font:{size:11}}}}},
+    plugins:[platBarLogoPlugin(names)]});
 }
 function drawTierChart(byTier){
   kill('chTier');const ctx=$('chTier');if(!ctx)return;
@@ -774,7 +786,8 @@ function creatorList(){
       const x=kolCalc(k);
       const fol=N(k.follower);
       arr.push({
-        name, campId:c.id, campName:c.name||'(ไม่มีชื่อ)', month:c.month||'', brand:c.brand||'',
+        name, memberId:(k.memberId||'').trim(), link:(k.link||'').trim(),
+        campId:c.id, campName:c.name||'(ไม่มีชื่อ)', month:c.month||'', brand:c.brand||'',
         platform:platMeta(k.platform).k, platforms:[platMeta(k.platform).k],
         budget:N(k.budget), follower:fol, views:N(k.views), eng:x.engagement,
         er: isFinite(x.erViews)? x.erViews : NaN,       // ER (Eng/View)
@@ -815,10 +828,11 @@ function renderCreators(){
   }
 
   // filters
+  const q=CRE_Q.toLowerCase();
   let list=all.filter(c=>
     (!CRE_PLAT||c.platform===CRE_PLAT) &&
     (!CRE_TIER||c.tier===CRE_TIER) &&
-    (!CRE_Q||c.name.toLowerCase().includes(CRE_Q.toLowerCase())));
+    (!CRE_Q||c.name.toLowerCase().includes(q)||(c.memberId||'').toLowerCase().includes(q)));
   // sort
   const dir={eng:-1,views:-1,er:-1,budget:-1,cpv:1,cpc:1};
   list.sort((a,b)=>{
@@ -836,9 +850,13 @@ function renderCreators(){
 
   const rows=list.map((c,i)=>{
     const tm=tierMeta(c.tier), rm=RATE_META[c.rate];
+    const cMid=c.memberId?`<span class="mid">${esc(c.memberId)}</span>`:'';
+    const cName=c.link
+      ? `<a href="${esc(c.link)}" target="_blank" rel="noopener" class="klink">${esc(c.name)} ↗</a>`
+      : esc(c.name);
     return `<tr>
       <td>${rankBadge(i+1)}</td>
-      <td><div class="t-name">${esc(c.name)}</div>
+      <td><div class="t-name">${cMid}${cName}</div>
         <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap">
           <span class="chip ${tm.k.toLowerCase()}" style="font-size:10px;padding:1px 6px">${tm.label}</span>
           <span class="chip ${platMeta(c.platform).cls}" style="font-size:10px;padding:1px 6px">${esc(c.platform)}</span></div></td>
@@ -870,7 +888,7 @@ function renderCreators(){
 
     <div class="card">
       <div class="toolbar" style="padding:14px 16px;gap:10px;flex-wrap:wrap">
-        <input class="inp" style="max-width:220px" placeholder="ค้นหาชื่อ Creator…" value="${esc(CRE_Q)}"
+        <input class="inp" style="max-width:240px" placeholder="ค้นหาชื่อ / Member ID…" value="${esc(CRE_Q)}"
           oninput="CRE_Q=this.value;renderCreators()">
         <div class="sp"></div>
         <label class="fl">เรียงตาม
@@ -921,9 +939,9 @@ function drawCreatorChart(top){
 }
 
 function exportCreators(){
-  const rows=[['Creator','แคมเปญ','เดือน','Platform','Tier','Follower','Views','Engagement','ER% (Eng/View)','Budget','CPV','CPE','ประเมิน']];
+  const rows=[['Member ID','Creator','ลิงก์งาน','แคมเปญ','เดือน','Platform','Tier','Follower','Views','Engagement','ER% (Eng/View)','Budget','CPV','CPE','ประเมิน']];
   creatorList().forEach(c=>{
-    rows.push([c.name,c.campName,c.month,c.platform,c.tier,Math.round(c.follower),
+    rows.push([c.memberId||'',c.name,c.link||'',c.campName,c.month,c.platform,c.tier,Math.round(c.follower),
       c.views,c.eng,isFinite(c.er)?c.er.toFixed(2):'',c.budget,
       isFinite(c.cpv)?c.cpv.toFixed(2):'',isFinite(c.cpc)?c.cpc.toFixed(2):'',RATE_META[c.rate].t]);
   });
@@ -1282,9 +1300,10 @@ function detailKol(c,m){
   const rows=sorted.map(k=>{
     const x=k._c,pm=platMeta(k.platform),py=payMeta(k.paymentType),tm=tierMeta(x.tier);
     const re=rkEng.get(k.id),rv=rkView.get(k.id);
-    const nameHtml=k.link
+    const midHtml=k.memberId?`<span class="mid">${esc(k.memberId)}</span>`:'';
+    const nameHtml=midHtml+(k.link
       ? `<a href="${esc(k.link)}" target="_blank" rel="noopener" class="klink">${esc(k.name||'—')} ↗</a>`
-      : esc(k.name||'—');
+      : esc(k.name||'—'));
     const kt=k.kolType||'KOL';
     return `<tr>
       <td><input type="checkbox" class="kol-chk" ${KOL_SEL.has(k.id)?'checked':''} onchange="toggleKolSel('${k.id}')"></td>
@@ -1566,7 +1585,8 @@ function openKol(cid,kid){
   showModal(`<div class="modal wide"><div class="modal-h">
     <h3>${kid?'แก้ไข KOL':'เพิ่ม KOL'}</h3><button class="x" onclick="closeModal()">${ico('close')}</button></div>
     <div class="modal-b">
-      <div class="f-row f-2">
+      <div class="f-row f-3">
+        <div class="field"><label>Member ID <span class="hint">(ไม่บังคับ)</span></label><input id="kMember" value="${esc(k.memberId||'')}" placeholder="เช่น 100245"></div>
         <div class="field"><label>ชื่อ / Handle KOL</label><input id="kName" value="${esc(k.name||'')}" placeholder="@username"></div>
         <div class="field"><label>แพลตฟอร์ม</label><select id="kPlat" onchange="togglePlatOther()">${opt(PLATFORMS.map(p=>p.k),platSel)}</select></div>
       </div>
@@ -1608,7 +1628,7 @@ function updEng(){const e=$('engSum');if(e)e.textContent=fmt(N($('kLikes').value
 function readKol(){
   let platform=$('kPlat').value;
   if(platform==='Other'&&$('kPlatOther').value.trim())platform=$('kPlatOther').value.trim();
-  return{name:$('kName').value.trim(),platform,kolType:$('kType').value,paymentType:$('kPay').value,
+  return{name:$('kName').value.trim(),memberId:$('kMember').value.trim(),platform,kolType:$('kType').value,paymentType:$('kPay').value,
   link:$('kLink').value.trim(),contentType:$('kContent').value,
   budget:N($('kBudget').value),follower:N($('kFol').value),views:N($('kViews').value),
   likes:N($('kLikes').value),comments:N($('kCmt').value),shares:N($('kShare').value),saves:N($('kSave').value)};}
@@ -1735,9 +1755,9 @@ function downloadTemplate(){
     ['@yt_review','YouTube','KOL','Live','Konvy Credit','12000','240000','52000','2100','340','120','80','https://youtube.com/@yt_review']]);
   toast('ดาวน์โหลดเทมเพลต (มีตัวอย่าง) แล้ว');}
 function exportKol(cid){const c=DB.campaigns.find(x=>x.id===cid);
-  const rows=[['ชื่อ KOL','แพลตฟอร์ม','ประเภท KOL','ประเภทงาน','ประเภทการจ่ายเงิน','Tier','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','Engagement','ER/Follower%','ER/View%','CPV','CPE','ลิงก์งาน']];
+  const rows=[['Member ID','ชื่อ KOL','แพลตฟอร์ม','ประเภท KOL','ประเภทงาน','ประเภทการจ่ายเงิน','Tier','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','Engagement','ER/Follower%','ER/View%','CPV','CPE','ลิงก์งาน']];
   (c.kols||[]).forEach(k=>{const x=kolCalc(k);
-    rows.push([k.name,k.platform,k.kolType||'KOL',k.contentType||'',k.paymentType,x.tier,k.budget,k.follower,k.views,k.likes,k.comments,k.shares,k.saves,
+    rows.push([k.memberId||'',k.name,k.platform,k.kolType||'KOL',k.contentType||'',k.paymentType,x.tier,k.budget,k.follower,k.views,k.likes,k.comments,k.shares,k.saves,
       x.engagement,isFinite(x.erFollower)?x.erFollower.toFixed(2):'',isFinite(x.erViews)?x.erViews.toFixed(2):'',
       isFinite(x.cpv)?x.cpv.toFixed(2):'',isFinite(x.cpc)?x.cpc.toFixed(2):'',k.link||'']);});
   downloadCSV(`KOL_${(c.name||'campaign').replace(/\s+/g,'_')}.csv`,rows);toast('ส่งออก CSV แล้ว');}
@@ -1770,6 +1790,48 @@ let charts={};
 const CFONT="'IBM Plex Sans Thai', sans-serif";
 Chart.defaults.font.family=CFONT;Chart.defaults.color='#8B8896';
 const PAL=['#F72D74','#A557F4','#55E5FC','#29D494','#FFE01C','#8A32E0','#0C9DC2'];
+
+/* ---------- Platform CI colors + logos ---------- */
+const PLAT_COLOR={
+  'TikTok':'#010101','Instagram':'#E1306C','Facebook':'#1877F2','X':'#536471',
+  'YouTube':'#FF0000','Lemon8':'#00C36F','KONVY Community':'#F72D74','Other':'#A0A6B2'
+};
+const platColor=k=>PLAT_COLOR[k]||PLAT_COLOR['Other'];
+const PLAT_GLYPH={
+  'TikTok':'<path fill="#fff" d="M12.5.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.08-.14 1.62.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>',
+  'Instagram':'<rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="#fff" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.5" fill="#fff"/>',
+  'Facebook':'<path fill="#fff" d="M13.5 21v-8.2h2.75l.41-3.19H13.5V7.56c0-.92.26-1.55 1.58-1.55h1.69V3.15c-.29-.04-1.3-.13-2.47-.13-2.44 0-4.11 1.49-4.11 4.23v2.36H7.42v3.19h2.76V21h3.32z"/>',
+  'X':'<path fill="#fff" d="M17.53 3h2.9l-6.33 7.23L21.5 21h-5.6l-4.38-5.73L6.5 21H3.6l6.77-7.74L3 3h5.75l3.96 5.24L17.53 3zm-1.02 16.2h1.6L8.03 4.7H6.31l10.2 14.5z"/>',
+  'YouTube':'<path fill="#fff" d="M22.5 7.2s-.2-1.5-.85-2.14c-.82-.86-1.73-.87-2.15-.92C16.5 3.9 12 3.9 12 3.9s-4.5 0-7.5.24c-.42.05-1.33.06-2.15.92C1.7 5.7 1.5 7.2 1.5 7.2s-.2 1.76-.2 3.52v1.65c0 1.76.2 3.52.2 3.52s.2 1.5.85 2.14c.82.86 1.9.83 2.38.92 1.72.16 7.27.21 7.27.21s4.5-.01 7.5-.25c.42-.05 1.33-.06 2.15-.92.65-.64.85-2.14.85-2.14s.2-1.76.2-3.52v-1.65c0-1.76-.2-3.52-.2-3.52zM9.9 14.6V8.4l5.8 3.11-5.8 3.09z"/>',
+  'Lemon8':'<path fill="#fff" d="M12 3a3.4 3.4 0 0 0-2.2 6 4 4 0 1 0 4.4 0A3.4 3.4 0 0 0 12 3zm0 2.2a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6zm0 6a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8z"/>',
+  'KONVY Community':'<path d="M8 4v16M8 12l7-8M9.5 11.5 16 20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
+  'Other':'<circle cx="6" cy="12" r="2" fill="#fff"/><circle cx="12" cy="12" r="2" fill="#fff"/><circle cx="18" cy="12" r="2" fill="#fff"/>'
+};
+const platGlyph=k=>PLAT_GLYPH[k]||PLAT_GLYPH['Other'];
+function platBadgeSVG(name,size){size=size||18;
+  const bg = name==='Instagram'
+    ? '<defs><linearGradient id="igg'+size+'" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#FEDA75"/><stop offset=".35" stop-color="#FA7E1E"/><stop offset=".6" stop-color="#D62976"/><stop offset="1" stop-color="#8A3AB9"/></linearGradient></defs><rect width="24" height="24" rx="6.5" fill="url(#igg'+size+')"/>'
+    : '<rect width="24" height="24" rx="6.5" fill="'+platColor(name)+'"/>';
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="'+size+'" height="'+size+'">'+bg+'<g transform="translate(3.6 3.6) scale(.7)">'+platGlyph(name)+'</g></svg>';
+}
+function platBadgeURI(name){return 'data:image/svg+xml;utf8,'+encodeURIComponent(platBadgeSVG(name,24));}
+const PLAT_IMG={};
+function preloadPlatImgs(){Object.keys(PLAT_COLOR).forEach(n=>{if(PLAT_IMG[n])return;
+  const im=new Image();im.onload=()=>{try{Object.values(charts).forEach(c=>{if(c&&c.update)c.update('none');});}catch(e){}};
+  im.src=platBadgeURI(n);PLAT_IMG[n]=im;});}
+function platBarLogoPlugin(names){return{id:'platBarLogo',afterDatasetsDraw(chart){
+  const meta=chart.getDatasetMeta(0);if(!meta||!meta.data)return;const ctx=chart.ctx,a=chart.chartArea,sz=19;
+  meta.data.forEach((bar,i)=>{const im=PLAT_IMG[names[i]];if(!im||!im.complete||!im.naturalWidth)return;
+    const x=a.left+6,y=bar.y-sz/2;ctx.save();
+    if(ctx.roundRect){ctx.beginPath();ctx.roundRect(x-2.5,y-2.5,sz+5,sz+5,7);ctx.fillStyle='#fff';ctx.fill();}
+    else{ctx.fillStyle='#fff';ctx.fillRect(x-2.5,y-2.5,sz+5,sz+5);}
+    ctx.drawImage(im,x,y,sz,sz);ctx.restore();});
+}};}
+function platLegendHTML(ks,valOf,tot){return ks.map(k=>{
+  const p=(valOf(k)/tot*100);
+  return '<div class="pl-item"><span class="pl-ic">'+platBadgeSVG(k,18)+'</span><span class="pl-nm">'+esc(k)+'</span><span class="pl-pc">'+p.toFixed(1)+'%</span></div>';
+}).join('');}
+preloadPlatImgs();
 function kill(id){if(charts[id]){charts[id].destroy();delete charts[id];}}
 const monthOrder=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 const monthTH={JAN:'ม.ค.',FEB:'ก.พ.',MAR:'มี.ค.',APR:'เม.ย.',MAY:'พ.ค.',JUN:'มิ.ย.',JUL:'ก.ค.',AUG:'ส.ค.',SEP:'ก.ย.',OCT:'ต.ค.',NOV:'พ.ย.',DEC:'ธ.ค.'};
@@ -1805,21 +1867,23 @@ function drawEstActual(canvasId,byMonth,kind){
       scales:{y:{ticks:{callback:v=>fmtK(v)},grid:{color:'#EEEEF5'}},x:{grid:{display:false}}}}});}
 
 function drawPlatChart(byPlat){kill('chPlat');const ctx=$('chPlat');if(!ctx)return;
-  const ks=Object.keys(byPlat);if(!ks.length){ctx.parentElement.innerHTML='<div class="empty" style="padding:30px">ยังไม่มีข้อมูลแพลตฟอร์ม</div>';return;}
+  const ks=Object.keys(byPlat);const lg=$('platLegend');
+  if(!ks.length){ctx.parentElement.innerHTML='<div class="empty" style="padding:30px">ยังไม่มีข้อมูลแพลตฟอร์ม</div>';if(lg)lg.innerHTML='';return;}
   const tot=ks.reduce((s,k)=>s+byPlat[k].follower,0)||1;
-  charts.chPlat=new Chart(ctx,{type:'doughnut',data:{labels:ks.map(k=>`${k} (${(byPlat[k].follower/tot*100).toFixed(1)}%)`),
-    datasets:[{data:ks.map(k=>byPlat[k].follower),backgroundColor:PAL,borderWidth:2,borderColor:'#fff'}]},
+  charts.chPlat=new Chart(ctx,{type:'doughnut',data:{labels:ks,
+    datasets:[{data:ks.map(k=>byPlat[k].follower),backgroundColor:ks.map(platColor),borderWidth:2,borderColor:'#fff'}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
-      plugins:{legend:{position:'right',labels:{boxWidth:11,padding:10,font:{size:11.5}}},
-      tooltip:{callbacks:{label:c=>fmtK(c.parsed)+' followers · '+(c.parsed/tot*100).toFixed(1)+'%'}}}}});}
+      plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:c=>fmtK(c.parsed)+' followers · '+(c.parsed/tot*100).toFixed(1)+'%'}}}}});
+  if(lg)lg.innerHTML=platLegendHTML(ks,k=>byPlat[k].follower,tot);}
 
 function drawDetailPlatCharts(byPlat){const ks=Object.keys(byPlat);
   kill('chPlEng');const c1=$('chPlEng');if(c1)charts.chPlEng=new Chart(c1,{type:'bar',
-    data:{labels:ks,datasets:[{label:'Engagement',data:ks.map(k=>byPlat[k].eng),backgroundColor:PAL,borderRadius:5}]},
+    data:{labels:ks,datasets:[{label:'Engagement',data:ks.map(k=>byPlat[k].eng),backgroundColor:ks.map(platColor),borderRadius:5}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Engagement ตามแพลตฟอร์ม',font:{size:12.5,weight:'600'},color:'#55525F'}},
       scales:{y:{ticks:{callback:v=>fmtK(v)},grid:{color:'#EEEEF5'}},x:{grid:{display:false}}}}});
   kill('chPlReach');const c2=$('chPlReach');if(c2)charts.chPlReach=new Chart(c2,{type:'bar',
-    data:{labels:ks,datasets:[{label:'Impression',data:ks.map(k=>byPlat[k].views),backgroundColor:'#A557F4',borderRadius:5}]},
+    data:{labels:ks,datasets:[{label:'Impression',data:ks.map(k=>byPlat[k].views),backgroundColor:ks.map(platColor),borderRadius:5}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Impression ตามแพลตฟอร์ม',font:{size:12.5,weight:'600'},color:'#55525F'}},
       scales:{y:{ticks:{callback:v=>fmtK(v)},grid:{color:'#EEEEF5'}},x:{grid:{display:false}}}}});}
 
