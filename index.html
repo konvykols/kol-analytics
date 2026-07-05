@@ -62,6 +62,34 @@ a{color:var(--rose);text-decoration:none}
 .appbar-actions .btn.ghost{background:transparent;border-color:var(--line-2);color:var(--ink-2)}
 .appbar-actions .btn.ghost:hover{background:var(--surface-2);color:var(--ink)}
 .ab-div{width:1px;height:22px;background:var(--line-2);margin:0 3px;flex-shrink:0}
+.btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.btn.danger:hover{filter:brightness(.94)}
+.klink{color:var(--rose-d);text-decoration:none;font-weight:600}
+.klink:hover{text-decoration:underline}
+.kol-chk{width:15px;height:15px;cursor:pointer;accent-color:var(--rose)}
+.sel-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;margin-bottom:12px;
+  background:var(--rose-t);border:1px solid var(--rose);border-radius:10px;font-size:13px;color:var(--ink)}
+.sel-bar b{color:var(--rose-d)}
+.sel-bar .btn{margin-left:2px}
+.kol-table{font-size:12px}
+.kol-table th,.kol-table td{padding:7px 8px !important}
+.kol-table .chip{font-size:10px;padding:1px 6px}
+.kol-table .t-name{font-size:12.5px}
+.camp-table{font-size:12.5px}
+.camp-table th,.camp-table td{padding:9px 8px !important}
+.mr-calc{margin:6px 0 4px;border:1px solid var(--line-2);border-radius:10px;overflow:hidden}
+.mr-toggle{width:100%;display:flex;justify-content:space-between;align-items:center;
+  background:var(--surface-2);border:none;padding:10px 14px;font-family:inherit;font-size:13px;
+  font-weight:600;color:var(--ink);cursor:pointer}
+.mr-toggle:hover{background:var(--surface-3)}
+#mrPanel{padding:12px 14px}
+.mr-head{display:grid;grid-template-columns:1fr 1.4fr 1fr 34px;gap:8px;font-size:11px;color:var(--ink-3);margin-bottom:6px;padding:0 2px}
+.mr-row{display:grid;grid-template-columns:1fr 1.4fr 1fr 34px;gap:8px;margin-bottom:7px;align-items:center}
+.mr-row input,.mr-row select{padding:8px 10px;border:1px solid var(--line-2);border-radius:8px;font-size:13px;width:100%}
+.mr-row input:focus,.mr-row select:focus{outline:none;border-color:var(--rose)}
+.mr-total{display:flex;align-items:center;gap:12px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:14px}
+.mr-total b{font-family:'Anuphan';font-size:19px;color:var(--rose);font-weight:700}
+.mr-total .btn{margin-left:auto}
 
 .main{flex:1;min-width:0;display:flex;flex-direction:column}
 .topbar{min-height:56px;background:rgba(255,255,255,.86);backdrop-filter:blur(10px);
@@ -83,8 +111,6 @@ a{color:var(--rose);text-decoration:none}
 .btn.ghost{background:transparent;border-color:transparent;box-shadow:none}
 .btn.ghost:hover{background:var(--surface-2)}
 .btn.sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
-.btn.danger{color:var(--red)}
-.btn.danger:hover{background:var(--red-t);border-color:var(--red)}
 
 /* ---------- Cards / KPI ---------- */
 .grid{display:grid;gap:16px}
@@ -94,20 +120,20 @@ a{color:var(--rose);text-decoration:none}
 .sec-title .bar{width:3px;height:16px;border-radius:2px;background:var(--rose)}
 .muted{color:var(--ink-3)}
 
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 17px;
-  box-shadow:var(--sh-sm);position:relative;overflow:hidden}
-.kpi .k-lab{font-size:11.5px;color:var(--ink-3);font-weight:500;letter-spacing:.01em;
-  display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.06em}
-.kpi .k-val{font-family:'Anuphan';font-weight:700;font-size:25px;margin-top:8px;line-height:1;letter-spacing:-.02em}
-.kpi .k-val .u{font-size:13px;color:var(--ink-3);font-weight:500;margin-left:2px}
-.kpi .k-sub{font-size:11.5px;color:var(--ink-2);margin-top:6px}
-.kpi .k-ic{position:absolute;top:14px;right:14px;width:16px;height:16px;color:var(--line-2)}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:12px;align-items:stretch}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;
+  box-shadow:var(--sh-sm);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.kpi .k-lab{font-size:10.5px;color:var(--ink-3);font-weight:500;letter-spacing:.01em;
+  display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.05em;min-height:24px;padding-right:18px}
+.kpi .k-val{font-family:'Anuphan';font-weight:700;font-size:23px;margin-top:8px;line-height:1;letter-spacing:-.02em}
+.kpi .k-val .u{font-size:12px;color:var(--ink-3);font-weight:500;margin-left:2px}
+.kpi .k-sub{font-size:10.5px;color:var(--ink-3);margin-top:5px;line-height:1.3}
+.kpi .k-ic{position:absolute;top:13px;right:13px;width:15px;height:15px;color:var(--line-2)}
 .kpi.hl{background:var(--surface)}
-.kpi.big{grid-column:span 2}
-.kpi.big .k-val{font-size:34px;color:var(--rose)}
+.kpi.big{grid-column:auto}
+.kpi.big .k-val{font-size:23px;color:var(--rose)}
 .kpi.big.save .k-val{color:var(--green)}
-.kpi.big .k-sub{font-size:12.5px;color:var(--ink-2);margin-top:7px}
+.kpi.big .k-sub{font-size:10.5px;color:var(--ink-3);margin-top:5px}
 
 /* Hero savings */
 .hero{background:linear-gradient(120deg,#F72D74 0%,#C438C0 52%,#A557F4 118%);
@@ -153,6 +179,7 @@ tfoot td.num{font-family:'IBM Plex Mono'}
 .chip.x{background:#E9E9EA;color:#2A2A2C}
 .chip.yt{background:#FCE6E6;color:#B02020}
 .chip.lm{background:#FFF3D9;color:#9A6B0C}
+.chip.kc{background:var(--rose-t);color:var(--rose-d)}
 .chip.ot{background:var(--surface-3);color:var(--ink-2)}
 .chip.nano{background:var(--green-t);color:var(--green)}
 .chip.micro{background:var(--blue-t);color:var(--blue-d)}
@@ -265,6 +292,7 @@ tfoot td.num{font-family:'IBM Plex Mono'}
   .content .grid[style*="1.55fr"],.content .grid[style*="1.4fr"],
   .content .grid[style*="1fr 1fr"]{grid-template-columns:1fr!important}
 }
+@media(max-width:920px){.dash-charts{grid-template-columns:1fr !important}}
 @media(max-width:720px){.content{padding:18px 14px 50px}.topbar{padding:0 14px;gap:8px}
   .topbar h1{font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .topbar .sp{flex:0 0 6px}.crumb{display:none}
@@ -357,18 +385,20 @@ const TIERS=[
 ];
 const PLATFORMS=[
   {k:'TikTok',cls:'tk'},{k:'Instagram',cls:'ig'},{k:'Facebook',cls:'fb'},
-  {k:'X',cls:'x'},{k:'YouTube',cls:'yt'},{k:'Lemon8',cls:'lm'},{k:'Other',cls:'ot'}
+  {k:'X',cls:'x'},{k:'YouTube',cls:'yt'},{k:'Lemon8',cls:'lm'},
+  {k:'KONVY Community',cls:'kc'},{k:'Other',cls:'ot'}
 ];
 const PAYTYPES=[
-  {k:'KOC Seeding',cls:'seed',short:'Seeding'},
   {k:'Barter',cls:'barter',short:'Barter'},
   {k:'เงินสด',cls:'cash',short:'เงินสด'},
-  {k:'Konvy Credit',cls:'credit',short:'Credit'}
+  {k:'Konvy Credit',cls:'credit',short:'Credit'},
+  {k:'ฟรี/Seeding',cls:'seed',short:'ฟรี'}
 ];
+const KOLTYPES=[{k:'KOL'},{k:'KOC Seeding'}];
 const platMeta=k=>PLATFORMS.find(p=>p.k===k)||{k:k||'Other',cls:'ot'};
-const payMeta=k=>PAYTYPES.find(p=>p.k===k)||{k:k||'—',cls:'ot',short:k||'—'};
-const tierOf=f=>{const n=+f||0;for(const t of TIERS)if(n<t.max)return t.k;return 'MEGA';};
-const tierMeta=k=>TIERS.find(t=>t.k===k)||TIERS[0];
+const payMeta=k=>PAYTYPES.find(p=>p.k===k)|| (k==='KOC Seeding'?{k:'KOC Seeding',cls:'seed',short:'Seeding'}:{k:k||'—',cls:'ot',short:k||'—'});
+const tierOf=f=>{const n=+f||0;if(n<1000)return '';for(const t of TIERS)if(n<t.max)return t.k;return 'MEGA';};
+const tierMeta=k=>k?(TIERS.find(t=>t.k===k)||TIERS[0]):{k:'',label:'< 1K',range:'< 1,000'};
 
 /* ---------- state + storage ---------- */
 const KEY='konvy_kol_perf_v1';
@@ -387,7 +417,7 @@ function save(){
 const uid=()=>Math.random().toString(36).slice(2,9);
 
 /* ---------- number helpers ---------- */
-const N=v=>{const n=+v;return isFinite(n)?n:0;};
+const N=v=>{if(typeof v==='string')v=v.replace(/[,\s฿]/g,'');const n=+v;return isFinite(n)?n:0;};
 const fmt=(v,d=0)=>{const n=+v;if(!isFinite(n))return '—';
   return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});};
 const fmtK=v=>{const n=+v||0;if(n>=1e6)return (n/1e6).toFixed(n>=1e7?0:1)+'M';
@@ -548,26 +578,26 @@ function renderDashboard(){
   const months=Object.keys(t.byMonth);
   content().innerHTML=`
     <div class="kpi-row">
-      ${kpiBig('ประหยัดจาก Market Rate', isFinite(t.savingPct)?pct(t.savingPct,1):'—',
-         `ประหยัด ${baht(t.saving)} จาก ${baht(t.market)} · จ่ายจริง ${baht(t.paid)}`, ico('coin'),'save')}
+      ${kpiBig('ประหยัด (Cost Eff.)', isFinite(t.savingPct)?pct(t.savingPct,1):'—',
+         `฿${fmt(t.saving)} · จ่าย ฿${fmt(t.paid)}`, ico('coin'),'save')}
       ${kpi('แคมเปญ',fmt(t.camps),'',ico('flag'))}
       ${kpi('KOL / KOC',fmt(t.kols),'ราย',ico('users'))}
-      ${kpi('Follower รวม',fmtK(t.follower),'followers',ico('reach'))}
+      ${kpi('Follower รวม',fmtK(t.follower),'',ico('reach'))}
       ${kpi('Impression',fmtK(t.views),'',ico('eye'))}
       ${kpi('Engagement',fmtK(t.eng),'',ico('heart'))}
-      ${kpi('ER · Eng/Impression',isFinite(t.er)?pct(t.er,2):'—','',ico('heart'))}
-      ${kpi('CPV เฉลี่ย',isFinite(t.cpv)?baht(t.cpv,2):'—','บาท/วิว',ico('coin'))}
-      ${kpi('Achieve Impression',isFinite(t.achImp)?pct(t.achImp,0):'—',t.estImp?`เป้า ${fmtK(t.estImp)}`:'ยังไม่ตั้งเป้า',ico('eye'))}
+      ${kpi('ER (Eng/Imp)',isFinite(t.er)?pct(t.er,2):'—','',ico('heart'))}
+      ${kpi('CPV เฉลี่ย',isFinite(t.cpv)?baht(t.cpv,2):'—','',ico('coin'))}
+      ${kpi('Achieve Imp.',isFinite(t.achImp)?pct(t.achImp,0):'—',t.estImp?`เป้า ${fmtK(t.estImp)}`:'—',ico('eye'))}
     </div>
 
-    <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:18px">
+    <div class="grid dash-charts" style="grid-template-columns:1fr 1fr 1fr;margin-top:18px">
       <div class="card pad">
         <div class="toolbar" style="margin-bottom:16px">
           <div class="sec-title"><span class="bar"></span>Impression · Est vs Actual</div>
           <div class="sp"></div>
           ${achBadge(t.achImp)}
         </div>
-        <div class="chart-wrap"><canvas id="chImp"></canvas></div>
+        <div class="chart-wrap sm"><canvas id="chImp"></canvas></div>
       </div>
       <div class="card pad">
         <div class="toolbar" style="margin-bottom:16px">
@@ -575,23 +605,21 @@ function renderDashboard(){
           <div class="sp"></div>
           ${achBadge(t.achEng)}
         </div>
-        <div class="chart-wrap"><canvas id="chEng"></canvas></div>
-      </div>
-    </div>
-
-    <div class="grid" style="grid-template-columns:1.4fr 1fr;margin-top:18px">
-      <div class="card pad">
-        <div class="toolbar" style="margin-bottom:14px">
-          <div class="sec-title"><span class="bar"></span>สรุปแคมเปญทั้งหมด</div>
-          <div class="sp"></div>
-          <button class="btn sm" onclick="go('campaigns')">ดูทั้งหมด →</button>
-        </div>
-        ${campaignTable(DB.campaigns.slice().reverse().slice(0,8))}
+        <div class="chart-wrap sm"><canvas id="chEng"></canvas></div>
       </div>
       <div class="card pad">
         <div class="sec-title" style="margin-bottom:16px"><span class="bar"></span>สัดส่วน Follower ตามแพลตฟอร์ม</div>
-        <div class="chart-wrap"><canvas id="chPlat"></canvas></div>
+        <div class="chart-wrap sm"><canvas id="chPlat"></canvas></div>
       </div>
+    </div>
+
+    <div class="card pad" style="margin-top:18px">
+      <div class="toolbar" style="margin-bottom:14px">
+        <div class="sec-title"><span class="bar"></span>สรุปแคมเปญทั้งหมด</div>
+        <div class="sp"></div>
+        <button class="btn sm" onclick="go('campaigns')">ดูทั้งหมด →</button>
+      </div>
+      ${campaignTable(DB.campaigns.slice().reverse().slice(0,8))}
     </div>`;
   drawEstActual('chImp',t.byMonth,'imp'); drawEstActual('chEng',t.byMonth,'eng'); drawPlatChart(t.byPlat);
 }
@@ -807,9 +835,31 @@ function renderCampaigns(){
       <div class="sp"></div>
       <span class="muted" style="font-size:12.5px">คลิกที่แคมเปญเพื่อดูรายละเอียด KOL, tier &amp; platform</span>
     </div>
+    <div class="sel-bar" id="campSelBar" style="display:${CAMP_SEL.size?'flex':'none'}">
+      <input type="checkbox" checked onchange="clearCampSel()" style="width:15px;height:15px;accent-color:var(--rose);cursor:pointer">
+      <span>เลือก <b id="campSelCount">${CAMP_SEL.size}</b> แคมเปญ</span>
+      <button class="btn sm danger" onclick="bulkDelCamp()">${ico('trash')} ลบที่เลือก</button>
+      <button class="btn sm ghost" onclick="clearCampSel()">ยกเลิก</button>
+      <span class="muted" style="font-size:11.5px;margin-left:4px">⚠ ลบแคมเปญ = ข้อมูล KOL/Seeding ข้างในหายทั้งหมด</span>
+    </div>
     ${list.length? campaignTable(list.slice().reverse(),true)
       : emptyState('ไม่พบแคมเปญ','ลองปรับคำค้นหา/เดือน หรือเพิ่มแคมเปญใหม่',
         `<button class="btn primary" onclick="openCampaign()">${plusIco()} เพิ่มแคมเปญ</button>`)}`;
+}
+
+let CAMP_SEL=new Set();
+function toggleCampSel(id){CAMP_SEL.has(id)?CAMP_SEL.delete(id):CAMP_SEL.add(id);updCampBar();}
+function toggleCampSelAll(checked){
+  if(checked)DB.campaigns.forEach(c=>CAMP_SEL.add(c.id));else CAMP_SEL.clear();
+  document.querySelectorAll('.camp-chk').forEach(cb=>cb.checked=checked);updCampBar();
+}
+function updCampBar(){const bar=$('campSelBar');if(bar){bar.style.display=CAMP_SEL.size?'flex':'none';const c=$('campSelCount');if(c)c.textContent=CAMP_SEL.size;}
+  const hdr=document.querySelector('.camp-table thead .camp-chk');if(hdr)hdr.checked=DB.campaigns.length&&DB.campaigns.every(c=>CAMP_SEL.has(c.id));}
+function clearCampSel(){CAMP_SEL.clear();document.querySelectorAll('.camp-chk').forEach(cb=>cb.checked=false);updCampBar();}
+function bulkDelCamp(){
+  if(!CAMP_SEL.size)return;
+  confirmModal(`ลบ ${CAMP_SEL.size} แคมเปญที่เลือก?`,'ข้อมูล KOL และ Seeding ในแคมเปญเหล่านี้จะหายทั้งหมด กู้คืนไม่ได้',()=>{
+    DB.campaigns=DB.campaigns.filter(c=>!CAMP_SEL.has(c.id));CAMP_SEL.clear();save();toast('ลบแคมเปญที่เลือกแล้ว');render();});
 }
 
 function campaignTable(list,full){
@@ -823,6 +873,7 @@ function campaignTable(list,full){
     const bc=campBench(m,bm);
     const bench=isFinite(bc.idx)?`<span class="pill ${bc.idx>=100?'g':bc.idx>=80?'n':'r'}">${pct(bc.idx,0)}</span>`:'<span class="pill n">—</span>';
     return `<tr class="t-click" onclick="openDetail('${c.id}')">
+      ${full?`<td onclick="event.stopPropagation()"><input type="checkbox" class="camp-chk kol-chk" ${CAMP_SEL.has(c.id)?'checked':''} onchange="toggleCampSel('${c.id}')"></td>`:''}
       <td><span class="chip ot">${esc(c.month||'—')}</span>${c.year?`<div class="muted" style="font-size:10.5px;margin-top:3px;text-align:center">${esc(c.year)}</div>`:''}</td>
       <td><div class="t-name">${esc(c.name||'(ไม่มีชื่อ)')}</div>${c.brand?`<div class="muted" style="font-size:11.5px">${esc(c.brand)}</div>`:''}</td>
       <td class="num">${m.count}</td>
@@ -835,27 +886,32 @@ function campaignTable(list,full){
       <td class="num">${achI}</td>
       <td class="num">${bench}</td>
       <td class="num">${isFinite(m.cpv)?baht(m.cpv,2):'—'}</td>
+      <td class="num">${isFinite(m.cpe)?baht(m.cpe,2):'—'}</td>
+      <td class="num">${isFinite(m.er)?pct(m.er,2):'—'}</td>
       ${full?`<td class="row-act" onclick="event.stopPropagation()">
         <button class="icon-btn" title="แก้ไข" onclick="openCampaign('${c.id}')">${ico('edit')}</button>
         <button class="icon-btn del" title="ลบ" onclick="delCampaign('${c.id}')">${ico('trash')}</button></td>`:''}
     </tr>`;}).join('');
   const gt=totals();
-  return `<div class="tbl-wrap"><table>
+  return `<div class="tbl-wrap"><table class="${full?'camp-table':''}">
     <thead><tr>
+      ${full?`<th style="width:34px"><input type="checkbox" class="camp-chk kol-chk" onchange="toggleCampSelAll(this.checked)" ${DB.campaigns.length&&DB.campaigns.every(c=>CAMP_SEL.has(c.id))?'checked':''}></th>`:''}
       <th>เดือน</th><th>แคมเปญ</th><th class="num">KOL</th><th class="num">Follower</th>
       <th class="num">Impression</th><th class="num">Engage</th><th class="num">Market</th>
       <th class="num">จ่ายจริง</th><th class="num">Saving</th><th class="num">Ach.Imp</th>
-      <th class="num">Benchmark</th><th class="num">CPV</th>
+      <th class="num">Benchmark</th><th class="num">CPV</th><th class="num">CPE</th><th class="num">ER</th>
       ${full?'<th></th>':''}
     </tr></thead>
     <tbody>${rows}</tbody>
     ${list.length>1?`<tfoot><tr>
+      ${full?'<td></td>':''}
       <td colspan="2">รวมทั้งหมด (${list.length} แคมเปญ)</td>
       <td class="num">${gt.kols}</td><td class="num">${fmtK(gt.follower)}</td>
       <td class="num">${fmtK(gt.views)}</td><td class="num">${fmtK(gt.eng)}</td>
       <td class="num">${baht(gt.market)}</td><td class="num">${baht(gt.paid)}</td>
       <td class="num"><span class="pill ${gt.savingPct>=0?'g':'r'}">${isFinite(gt.savingPct)?pct(gt.savingPct,1):'—'}</span></td>
-      <td class="num">—</td><td class="num">100%</td><td class="num">${isFinite(gt.cpv)?baht(gt.cpv,2):'—'}</td>${full?'<td></td>':''}
+      <td class="num">—</td><td class="num">100%</td><td class="num">${isFinite(gt.cpv)?baht(gt.cpv,2):'—'}</td>
+      <td class="num">${gt.eng?baht(gt.paid/gt.eng,2):'—'}</td><td class="num">${isFinite(gt.er)?pct(gt.er,2):'—'}</td>${full?'<td></td>':''}
     </tr></tfoot>`:''}
   </table></div>`;
 }
@@ -1044,7 +1100,25 @@ function detailPlatform(c,m){
 
 /* ---------- KOL TABLE (page 3) ---------- */
 let KOL_SORT='engagement';
+let KOL_SEL=new Set(), KOL_SEL_CID=null;
+function toggleKolSel(id){KOL_SEL.has(id)?KOL_SEL.delete(id):KOL_SEL.add(id);updBulkBar();}
+function toggleKolSelAll(checked,cid){
+  const c=DB.campaigns.find(x=>x.id===cid);
+  if(checked)(c.kols||[]).forEach(k=>KOL_SEL.add(k.id)); else KOL_SEL.clear();
+  document.querySelectorAll('.kol-chk').forEach(cb=>cb.checked=checked);
+  updBulkBar();
+}
+function updBulkBar(){const bar=$('selBar');if(bar){bar.style.display=KOL_SEL.size?'flex':'none';const c=$('selCount');if(c)c.textContent=KOL_SEL.size;}
+  const hdr=document.querySelector('.kol-table thead .kol-chk');if(hdr){const c=DB.campaigns.find(x=>x.id===KOL_SEL_CID);hdr.checked=c&&c.kols.length&&c.kols.every(k=>KOL_SEL.has(k.id));}}
+function clearKolSel(){KOL_SEL.clear();document.querySelectorAll('.kol-chk').forEach(cb=>cb.checked=false);updBulkBar();}
+function bulkDelKol(cid){
+  if(!KOL_SEL.size)return;
+  const c=DB.campaigns.find(x=>x.id===cid);
+  confirmModal(`ลบ ${KOL_SEL.size} รายการที่เลือก?`,'ลบพร้อมกันทั้งหมด กู้คืนไม่ได้',()=>{
+    c.kols=(c.kols||[]).filter(k=>!KOL_SEL.has(k.id));KOL_SEL.clear();save();toast('ลบรายการที่เลือกแล้ว');renderDetail();});
+}
 function detailKol(c,m){
+  if(KOL_SEL_CID!==c.id){KOL_SEL.clear();KOL_SEL_CID=c.id;}
   const kols=(c.kols||[]).map(k=>({...k,_c:kolCalc(k)}));
   // ranking maps
   const byEng=[...kols].sort((a,b)=>b._c.engagement-a._c.engagement);
@@ -1079,7 +1153,7 @@ function detailKol(c,m){
   if(!kols.length){$('subContent').innerHTML=head+`
     <div class="drop" id="dropZone" onclick="triggerImport('${c.id}')">
       ${ico('upload')}<h4>ลากไฟล์ CSV มาวาง หรือคลิกเพื่อเลือก</h4>
-      <p>คอลัมน์: ชื่อ KOL, แพลตฟอร์ม, ประเภทงาน, งบประมาณ, ผู้ติดตาม, วิว/Impression, ไลก์, คอมเมนต์, แชร์, บันทึก</p>
+      <p>คอลัมน์: ชื่อ KOL, แพลตฟอร์ม, ประเภทการจ่ายเงิน, งบประมาณ, ผู้ติดตาม, วิว/Impression, ไลก์, คอมเมนต์, แชร์, บันทึก</p>
     </div>
     ${emptyState('ยังไม่มี KOL รายคนในแคมเปญนี้','เพิ่มทีละคน หรืออัปโหลด CSV — หรือถ้าเป็นงาน Seeding ให้กรอกยอดรวมด้านล่าง',
       `<button class="btn primary" onclick="openKol('${c.id}')">${plusIco()} เพิ่ม KOL</button>`)}
@@ -1089,11 +1163,18 @@ function detailKol(c,m){
   const rows=sorted.map(k=>{
     const x=k._c,pm=platMeta(k.platform),py=payMeta(k.paymentType),tm=tierMeta(x.tier);
     const re=rkEng.get(k.id),rv=rkView.get(k.id);
+    const nameHtml=k.link
+      ? `<a href="${esc(k.link)}" target="_blank" rel="noopener" class="klink">${esc(k.name||'—')} ↗</a>`
+      : esc(k.name||'—');
+    const kt=k.kolType||'KOL';
     return `<tr>
+      <td><input type="checkbox" class="kol-chk" ${KOL_SEL.has(k.id)?'checked':''} onchange="toggleKolSel('${k.id}')"></td>
       <td>${rankBadge(re)}</td>
       <td>${rankBadge(rv)}</td>
-      <td><div class="t-name">${esc(k.name||'—')}</div>
-        <div style="display:flex;gap:4px;margin-top:3px"><span class="chip ${tm.k.toLowerCase()}" style="font-size:10px;padding:1px 6px">${tm.label}</span></div></td>
+      <td><div class="t-name">${nameHtml}</div>
+        <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap">
+          <span class="chip ${tm.k.toLowerCase()}" style="font-size:10px;padding:1px 6px">${tm.label}</span>
+          <span class="chip ${kt==='KOC Seeding'?'seed':'ot'}" style="font-size:10px;padding:1px 6px">${esc(kt)}</span></div></td>
       <td><span class="chip ${pm.cls}">${esc(pm.k)}</span></td>
       <td><span class="chip ${py.cls}">${esc(py.short)}</span></td>
       <td class="num">${baht(k.budget)}</td>
@@ -1121,10 +1202,17 @@ function detailKol(c,m){
   const fER=tf?teng/tf*100:NaN,fCPV=tv?tb/tv:NaN,fCPC=teng?tb/teng:NaN,fVR=tf?tv/tf*100:NaN,fERv=tv?teng/tv*100:NaN;
 
   $('subContent').innerHTML=head+`
-    <div class="tbl-wrap"><table>
+    <div class="sel-bar" id="selBar" style="display:${KOL_SEL.size?'flex':'none'}">
+      <input type="checkbox" checked onchange="clearKolSel()" style="width:15px;height:15px;accent-color:var(--rose);cursor:pointer">
+      <span>เลือก <b id="selCount">${KOL_SEL.size}</b> รายการ</span>
+      <button class="btn sm danger" onclick="bulkDelKol('${c.id}')">${ico('trash')} ลบที่เลือก</button>
+      <button class="btn sm ghost" onclick="clearKolSel()">ยกเลิก</button>
+    </div>
+    <div class="tbl-wrap"><table class="kol-table">
       <thead><tr>
+        <th style="width:34px"><input type="checkbox" class="kol-chk" onchange="toggleKolSelAll(this.checked,'${c.id}')" ${kols.length&&kols.every(k=>KOL_SEL.has(k.id))?'checked':''}></th>
         <th title="อันดับ Engagement">R.Eng</th><th title="อันดับ Views">R.View</th>
-        <th>KOL</th><th>Platform</th><th>ประเภท</th><th class="num">งบ</th>
+        <th>KOL</th><th>Platform</th><th>จ่ายเงิน</th><th class="num">งบ</th>
         <th class="num">Follower</th><th class="num">Views/Imp</th>
         <th class="num">Likes</th><th class="num">Cmt</th><th class="num">Share</th><th class="num">Save</th>
         <th class="num">Engage</th><th class="num">ER/Fol</th><th class="num">ER/View</th>
@@ -1132,7 +1220,7 @@ function detailKol(c,m){
       </tr></thead>
       <tbody>${rows}</tbody>
       <tfoot><tr>
-        <td></td><td></td><td>รวม ${kols.length} ราย</td><td></td><td></td>
+        <td></td><td></td><td></td><td>รวม ${kols.length} ราย</td><td></td><td></td>
         <td class="num">${baht(tb)}</td><td class="num">${fmt(tf)}</td><td class="num">${fmt(tv)}</td>
         <td class="num">${fmt(tl)}</td><td class="num">${fmt(tc)}</td><td class="num">${fmt(ts)}</td><td class="num">${fmt(tsv)}</td>
         <td class="num">${fmt(teng)}</td><td class="num">${isFinite(fER)?pct(fER,2):'—'}</td>
@@ -1241,8 +1329,36 @@ $('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeModal(
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
 /* --- Campaign form --- */
+/* ---------- Market Rate calculator (หลาย Tier) ---------- */
+const MARKET_SUGGEST={'':500,NANO:1000,MICRO:5000,MACRO:30000,MEGA:100000};
+let MR_ROWS=[];
+function mrToggle(){const p=$('mrPanel');const open=p.style.display==='none';
+  p.style.display=open?'block':'none';$('mrCaret').textContent=open?'▴':'▾';
+  if(open&&!MR_ROWS.length){MR_ROWS=[{count:'',tier:'MICRO',rate:MARKET_SUGGEST.MICRO}];mrRenderRows();}}
+function mrRenderRows(){
+  $('mrRows').innerHTML=MR_ROWS.map((r,i)=>`<div class="mr-row">
+    <input type="number" value="${r.count}" placeholder="0" oninput="mrCalc()" data-f="count">
+    <select onchange="mrTier(${i},this.value)">${TIERS.map(t=>`<option value="${t.k}"${r.tier===t.k?' selected':''}>${t.label} (${t.range})</option>`).join('')}</select>
+    <input type="number" value="${r.rate}" placeholder="0" oninput="mrCalc()" data-f="rate">
+    <button type="button" class="icon-btn del" onclick="mrDel(${i})">${ico('trash')}</button>
+  </div>`).join('');
+  mrCalc();
+}
+function mrSync(){document.querySelectorAll('#mrRows .mr-row').forEach((row,i)=>{
+  if(!MR_ROWS[i])return;
+  MR_ROWS[i].count=row.querySelector('[data-f="count"]').value;
+  MR_ROWS[i].rate=row.querySelector('[data-f="rate"]').value;});}
+function mrTier(i,tier){mrSync();MR_ROWS[i].tier=tier;MR_ROWS[i].rate=MARKET_SUGGEST[tier];mrRenderRows();}
+function mrAdd(){mrSync();MR_ROWS.push({count:'',tier:'MICRO',rate:MARKET_SUGGEST.MICRO});mrRenderRows();}
+function mrDel(i){mrSync();MR_ROWS.splice(i,1);if(!MR_ROWS.length)MR_ROWS.push({count:'',tier:'MICRO',rate:MARKET_SUGGEST.MICRO});mrRenderRows();}
+function mrTotalVal(){let t=0;document.querySelectorAll('#mrRows .mr-row').forEach(row=>{
+  t+=N(row.querySelector('[data-f="count"]').value)*N(row.querySelector('[data-f="rate"]').value);});return t;}
+function mrCalc(){const el=$('mrTotal');if(el)el.textContent=baht(mrTotalVal());}
+function mrApply(){const t=mrTotalVal();if($('fMarket'))$('fMarket').value=t;toast('ใส่ Market Rate = '+baht(t));}
+
 function openCampaign(id){
   const c=id?DB.campaigns.find(x=>x.id===id):{};
+  MR_ROWS=[];
   showModal(`<div class="modal"><div class="modal-h">
     <h3>${id?'แก้ไขหัวแคมเปญ':'เพิ่มแคมเปญใหม่'}</h3><button class="x" onclick="closeModal()">${ico('close')}</button></div>
     <div class="modal-b">
@@ -1263,6 +1379,17 @@ function openCampaign(id){
           <input id="fEstImp" type="number" value="${c.estImpression??''}" placeholder="0"></div>
         <div class="field"><label>Est. Engagement <span class="hint">(เป้า)</span></label>
           <input id="fEstEng" type="number" value="${c.estEngagement??''}" placeholder="0"></div>
+      </div>
+      <div class="mr-calc">
+        <button type="button" class="mr-toggle" onclick="mrToggle()"><span>🧮 คำนวณ Market Rate จาก Tier</span><span id="mrCaret">▾</span></button>
+        <div id="mrPanel" style="display:none">
+          <div class="mr-head"><span>จำนวน KOL</span><span>Tier</span><span>฿ / คน (ตลาด)</span><span></span></div>
+          <div id="mrRows"></div>
+          <button type="button" class="btn sm ghost" onclick="mrAdd()" style="margin-top:8px">+ เพิ่ม Tier</button>
+          <div class="mr-total">รวม Market Rate: <b id="mrTotal">฿0</b>
+            <button type="button" class="btn sm primary" onclick="mrApply()">ใช้ยอดนี้ →</button></div>
+          <p class="muted" style="font-size:11px;margin-top:2px">฿/คน เป็นค่าแนะนำตามตลาด — ลบแล้วกรอกเองได้ทุกช่อง · เพิ่มได้หลาย Tier</p>
+        </div>
       </div>
       <div class="compute-note">${ico('info')}<div>จ่ายจริง / Follower / Impression / Engagement รวมจากรายชื่อ KOL อัตโนมัติ</div></div>
     </div>
@@ -1293,16 +1420,25 @@ function openKol(cid,kid){
   const c=DB.campaigns.find(x=>x.id===cid);
   const k=kid?c.kols.find(x=>x.id===kid):{};
   const opt=(arr,sel,fn)=>arr.map(o=>{const v=fn?fn(o):o;return `<option value="${esc(v)}"${sel===v?' selected':''}>${esc(v)}</option>`;}).join('');
+  const isKnownPlat=PLATFORMS.some(p=>p.k===k.platform);
+  const platSel=k.platform?(isKnownPlat?k.platform:'Other'):'TikTok';
+  const platOther=(!isKnownPlat&&k.platform)?k.platform:'';
   showModal(`<div class="modal wide"><div class="modal-h">
     <h3>${kid?'แก้ไข KOL':'เพิ่ม KOL'}</h3><button class="x" onclick="closeModal()">${ico('close')}</button></div>
     <div class="modal-b">
       <div class="f-row f-2">
         <div class="field"><label>ชื่อ / Handle KOL</label><input id="kName" value="${esc(k.name||'')}" placeholder="@username"></div>
-        <div class="field"><label>แพลตฟอร์ม</label><select id="kPlat">${opt(PLATFORMS.map(p=>p.k),k.platform||'TikTok')}</select></div>
+        <div class="field"><label>แพลตฟอร์ม</label><select id="kPlat" onchange="togglePlatOther()">${opt(PLATFORMS.map(p=>p.k),platSel)}</select></div>
+      </div>
+      <div class="field" id="kPlatOtherWrap" style="margin-bottom:14px;${platSel==='Other'?'':'display:none'}">
+        <label>ระบุแพลตฟอร์ม (Other)</label><input id="kPlatOther" value="${esc(platOther)}" placeholder="เช่น Threads, Blockdit"></div>
+      <div class="f-row f-2">
+        <div class="field"><label>ประเภท KOL</label><select id="kType">${opt(KOLTYPES.map(t=>t.k),k.kolType||'KOL')}</select></div>
+        <div class="field"><label>ประเภทการจ่ายเงิน</label><select id="kPay">${opt(PAYTYPES.map(p=>p.k),k.paymentType||'Barter')}</select></div>
       </div>
       <div class="f-row f-2">
-        <div class="field"><label>ประเภทงาน</label><select id="kPay">${opt(PAYTYPES.map(p=>p.k),k.paymentType||'KOC Seeding')}</select></div>
         <div class="field"><label>งบประมาณ <span class="hint">(฿)</span></label><input id="kBudget" type="number" value="${k.budget??''}" placeholder="0"></div>
+        <div class="field"><label>ลิงก์งาน <span class="hint">(URL คลิป/โพสต์)</span></label><input id="kLink" value="${esc(k.link||'')}" placeholder="https://..."></div>
       </div>
       <div class="f-row f-2">
         <div class="field"><label>ผู้ติดตาม (Follower)</label><input id="kFol" type="number" value="${k.follower??''}" placeholder="0" oninput="updTier()"></div>
@@ -1324,9 +1460,14 @@ function openKol(cid,kid){
     </div></div>`);
   updTier();updEng();setTimeout(()=>$('kName')?.focus(),50);
 }
+function togglePlatOther(){const w=$('kPlatOtherWrap');if(w)w.style.display=$('kPlat').value==='Other'?'':'none';}
 function updTier(){const t=$('tierVal');if(t)t.textContent=tierMeta(tierOf($('kFol').value)).label+' ('+tierMeta(tierOf($('kFol').value)).range+')';}
 function updEng(){const e=$('engSum');if(e)e.textContent=fmt(N($('kLikes').value)+N($('kCmt').value)+N($('kShare').value)+N($('kSave').value));}
-function readKol(){return{name:$('kName').value.trim(),platform:$('kPlat').value,paymentType:$('kPay').value,
+function readKol(){
+  let platform=$('kPlat').value;
+  if(platform==='Other'&&$('kPlatOther').value.trim())platform=$('kPlatOther').value.trim();
+  return{name:$('kName').value.trim(),platform,kolType:$('kType').value,paymentType:$('kPay').value,
+  link:$('kLink').value.trim(),
   budget:N($('kBudget').value),follower:N($('kFol').value),views:N($('kViews').value),
   likes:N($('kLikes').value),comments:N($('kCmt').value),shares:N($('kShare').value),saves:N($('kSave').value)};}
 function saveKol(cid,kid,again){
@@ -1367,7 +1508,8 @@ function parseCSV(text){
 const KOL_COLS=[
   {key:'name',aliases:['ชื่อ kol','ชื่อ','kol','name','handle','ชื่อ influencer']},
   {key:'platform',aliases:['แพลตฟอร์ม','platform','ช่องทาง']},
-  {key:'paymentType',aliases:['ประเภทงาน','ประเภท','payment','type','ประเภทการจ้าง']},
+  {key:'kolType',aliases:['ประเภท kol','ประเภทkol','kol type','koltype']},
+  {key:'paymentType',aliases:['ประเภทการจ่ายเงิน','ประเภทงาน','ประเภท','payment','type','ประเภทการจ้าง']},
   {key:'budget',aliases:['งบประมาณ','งบ','budget','cost','ค่าจ้าง']},
   {key:'follower',aliases:['ผู้ติดตาม','follower','followers','ยอดผู้ติดตาม']},
   {key:'views',aliases:['วิว/impression','วิว','views','impression','view','การมองเห็น']},
@@ -1375,6 +1517,7 @@ const KOL_COLS=[
   {key:'comments',aliases:['คอมเมนต์','comments','comment','ความคิดเห็น']},
   {key:'shares',aliases:['แชร์','shares','share']},
   {key:'saves',aliases:['บันทึก','saves','save','เซฟ']},
+  {key:'link',aliases:['ลิงก์งาน','ลิงก์','ลิ้งค์','ลิงค์','link','url']},
 ];
 function mapHeaders(hdr){
   const norm=hdr.map(h=>h.trim().toLowerCase());
@@ -1391,11 +1534,13 @@ function matchPlatform(v){if(!v)return 'Other';const s=v.trim().toLowerCase();
   if(hit)return hit.k;if(s.includes('ig')||s.includes('insta'))return 'Instagram';
   if(s.includes('fb')||s.includes('face'))return 'Facebook';if(s.includes('tik')||s==='tt')return 'TikTok';
   if(s.includes('yt')||s.includes('you'))return 'YouTube';if(s==='x'||s.includes('twit'))return 'X';return 'Other';}
-function matchPay(v){if(!v)return 'KOC Seeding';const s=v.trim().toLowerCase();
-  if(s.includes('seed')||s.includes('koc'))return 'KOC Seeding';
+function matchPay(v){if(!v)return 'Barter';const s=v.trim().toLowerCase();
+  if(s.includes('seed')||s.includes('koc')||s.includes('ฟรี')||s.includes('free'))return 'ฟรี/Seeding';
   if(s.includes('barter'))return 'Barter';
   if(s.includes('credit')||s.includes('เครดิต')||s.includes('konvy'))return 'Konvy Credit';
   if(s.includes('เงินสด')||s.includes('cash'))return 'เงินสด';return v.trim();}
+function matchKolType(v){const s=(v||'').trim().toLowerCase();
+  return (s.includes('seed')||s.includes('koc'))?'KOC Seeding':'KOL';}
 
 let importTarget=null;
 function triggerImport(cid){importTarget=cid;$('fileInput').click();}
@@ -1414,7 +1559,7 @@ function doImport(text){
   let n=0;
   for(let i=1;i<rows.length;i++){const r=rows[i];const g=k=>map[k]>=0?(r[map[k]]||'').trim():'';
     const name=g('name');if(!name)continue;
-    c.kols.push({id:uid(),name,platform:matchPlatform(g('platform')),paymentType:matchPay(g('paymentType')),
+    c.kols.push({id:uid(),name,platform:matchPlatform(g('platform')),kolType:matchKolType(g('kolType')),paymentType:matchPay(g('paymentType')),link:g('link'),
       budget:N(g('budget')),follower:N(g('follower')),views:N(g('views')),
       likes:N(g('likes')),comments:N(g('comments')),shares:N(g('shares')),saves:N(g('saves'))});n++;}
   save();toast(`นำเข้า ${n} KOL สำเร็จ`);if(VIEW==='detail')renderDetail();else render();
@@ -1431,18 +1576,18 @@ function downloadCSV(name,rows){
   const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
 function downloadTemplate(){
   downloadCSV('KOL_template_ตัวอย่าง.csv',[
-    ['ชื่อ KOL','แพลตฟอร์ม','ประเภทงาน','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก'],
-    ['@beauty_micro','TikTok','เงินสด','8000','120000','45000','1800','220','90','60'],
-    ['@skincare_ig','Instagram','Barter','0','65000','9100','480','23','7','12'],
-    ['@nano_koc','TikTok','KOC Seeding','500','8500','4200','160','12','5','3'],
-    ['@yt_review','YouTube','Konvy Credit','12000','240000','52000','2100','340','120','80']]);
+    ['ชื่อ KOL','แพลตฟอร์ม','ประเภท KOL','ประเภทการจ่ายเงิน','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','ลิงก์งาน'],
+    ['@beauty_micro','TikTok','KOL','เงินสด','8000','120000','45000','1800','220','90','60','https://www.tiktok.com/@beauty_micro'],
+    ['@skincare_ig','Instagram','KOL','Barter','0','65000','9100','480','23','7','12','https://www.instagram.com/skincare_ig'],
+    ['@nano_koc','TikTok','KOC Seeding','ฟรี/Seeding','0','8500','4200','160','12','5','3',''],
+    ['@yt_review','YouTube','KOL','Konvy Credit','12000','240000','52000','2100','340','120','80','https://youtube.com/@yt_review']]);
   toast('ดาวน์โหลดเทมเพลต (มีตัวอย่าง) แล้ว');}
 function exportKol(cid){const c=DB.campaigns.find(x=>x.id===cid);
-  const rows=[['ชื่อ KOL','แพลตฟอร์ม','ประเภทงาน','Tier','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','Engagement','ER/Follower%','ER/View%','CPV','CPE']];
+  const rows=[['ชื่อ KOL','แพลตฟอร์ม','ประเภท KOL','ประเภทการจ่ายเงิน','Tier','งบประมาณ','ผู้ติดตาม','วิว/Impression','ไลก์','คอมเมนต์','แชร์','บันทึก','Engagement','ER/Follower%','ER/View%','CPV','CPE','ลิงก์งาน']];
   (c.kols||[]).forEach(k=>{const x=kolCalc(k);
-    rows.push([k.name,k.platform,k.paymentType,x.tier,k.budget,k.follower,k.views,k.likes,k.comments,k.shares,k.saves,
+    rows.push([k.name,k.platform,k.kolType||'KOL',k.paymentType,x.tier,k.budget,k.follower,k.views,k.likes,k.comments,k.shares,k.saves,
       x.engagement,isFinite(x.erFollower)?x.erFollower.toFixed(2):'',isFinite(x.erViews)?x.erViews.toFixed(2):'',
-      isFinite(x.cpv)?x.cpv.toFixed(2):'',isFinite(x.cpc)?x.cpc.toFixed(2):'']);});
+      isFinite(x.cpv)?x.cpv.toFixed(2):'',isFinite(x.cpc)?x.cpc.toFixed(2):'',k.link||'']);});
   downloadCSV(`KOL_${(c.name||'campaign').replace(/\s+/g,'_')}.csv`,rows);toast('ส่งออก CSV แล้ว');}
 function exportAllCampaigns(){
   if(!DB.campaigns.length){toast('ยังไม่มีข้อมูล');return;}
@@ -1552,7 +1697,11 @@ function plusIco(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentC
 
 /* ================= SAMPLE DATA ================= */
 function loadSample(){
-  const mk=(name,plat,pay,bud,fol,vw,li,co,sh,sv)=>({id:uid(),name,platform:plat,paymentType:pay,budget:bud,follower:fol,views:vw,likes:li,comments:co,shares:sh,saves:sv});
+  const mk=(name,plat,pay,bud,fol,vw,li,co,sh,sv,link)=>{
+    let kolType='KOL';
+    if(pay==='KOC Seeding'){kolType='KOC Seeding';pay='ฟรี/Seeding';}
+    return {id:uid(),name,platform:plat,kolType,paymentType:pay,link:link||'',budget:bud,follower:fol,views:vw,likes:li,comments:co,shares:sh,saves:sv};
+  };
   DB={campaigns:[
     {id:uid(),month:'JUN',year:2026,brand:'MYS',name:'MYS Member Exclusive',marketRate:100000,estImpression:235962,estEngagement:4766,
      kols:[mk('@glowbymind','Instagram','KOC Seeding',500,13900,5851,123,1,0,0),
@@ -1572,12 +1721,12 @@ function loadSample(){
        mk('@radiant.th','Instagram','Barter',0,35000,1300,202,11,27,0),
        mk('@bignano','Facebook','KOC Seeding',0,180000,296,2,1,0,0)]},
     {id:uid(),month:'JUN',year:2026,brand:'ANUA',name:'ANUA Clean & Care',marketRate:100000,estImpression:64053,estEngagement:1294,
-     kols:[mk('@anua.fan1','TikTok','เงินสด',1500,240000,52000,3100,180,220,150),
-       mk('@kbeauty.th','Instagram','Barter',0,88000,12400,890,45,30,60),
+     kols:[mk('@anua.fan1','TikTok','เงินสด',1500,240000,52000,3100,180,220,150,'https://www.tiktok.com/@anua.fan1'),
+       mk('@kbeauty.th','Instagram','Barter',0,88000,12400,890,45,30,60,'https://www.instagram.com/kbeauty.th'),
        mk('@toner.review','TikTok','KOC Seeding',800,45000,9800,540,28,15,20),
        mk('@dailyskin','Instagram','เงินสด',1200,63000,7200,410,22,18,25)]},
     {id:uid(),month:'MAY',year:2026,brand:'MEDICUBE',name:'MEDICUBE Age-R Launch',marketRate:160000,estImpression:27129,estEngagement:658,
-     kols:[mk('@device.beauty','TikTok','เงินสด',18000,425300,27129,540,60,40,18),
+     kols:[mk('@device.beauty','TikTok','เงินสด',18000,425300,27129,540,60,40,18,'https://www.tiktok.com/@device.beauty'),
        mk('@techskin.th','Instagram','Konvy Credit',12000,120000,9800,320,25,12,14),
        mk('@glowdevice','YouTube','เงินสด',15000,88000,42000,890,110,35,28)]}
   ]};
