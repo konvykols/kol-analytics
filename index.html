@@ -410,6 +410,16 @@ const PAYTYPES=[
 ];
 const KOLTYPES=[{k:'KOL'},{k:'KOC Seeding'}];
 const CONTENT_TYPES=['Photo Album','Video','Live'];
+const CT_META={
+  'Photo Album':{c:'#8A32E0',bg:'#F1E6FE',ic:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-4.5-4.5L5 21"/></svg>'},
+  'Video':{c:'#D8135F',bg:'#FEE3EE',ic:'<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg>'},
+  'Live':{c:'#0C9DC2',bg:'#DEF8FD',ic:'<svg width="10" height="10" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M6.4 6.4a7 7 0 0 0 0 11.2M17.6 6.4a7 7 0 0 1 0 11.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'}
+};
+function ctChip(ct,small){if(!ct)return '';
+  const m=CT_META[ct]||{c:'#55525F',bg:'#ECECF4',ic:''};
+  const fs=small?'font-size:10px;padding:1px 6px;':'';
+  return '<span class="chip" style="'+fs+'background:'+m.bg+';color:'+m.c+'">'+m.ic+esc(ct)+'</span>';
+}
 const platMeta=k=>PLATFORMS.find(p=>p.k===k)||{k:k||'Other',cls:'ot'};
 const payMeta=k=>PAYTYPES.find(p=>p.k===k)|| (k==='KOC Seeding'?{k:'KOC Seeding',cls:'seed',short:'Seeding'}:{k:k||'—',cls:'ot',short:k||'—'});
 const tierOf=f=>{const n=+f||0;if(n<1000)return '';for(const t of TIERS)if(n<t.max)return t.k;return 'MEGA';};
@@ -786,7 +796,7 @@ function creatorList(){
       const x=kolCalc(k);
       const fol=N(k.follower);
       arr.push({
-        name, memberId:(k.memberId||'').trim(), link:(k.link||'').trim(),
+        name, memberId:(k.memberId||'').trim(), link:(k.link||'').trim(), contentType:k.contentType||'',
         campId:c.id, campName:c.name||'(ไม่มีชื่อ)', month:c.month||'', brand:c.brand||'',
         platform:platMeta(k.platform).k, platforms:[platMeta(k.platform).k],
         budget:N(k.budget), follower:fol, views:N(k.views), eng:x.engagement,
@@ -859,7 +869,8 @@ function renderCreators(){
       <td><div class="t-name">${cMid}${cName}</div>
         <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap">
           <span class="chip ${tm.k.toLowerCase()}" style="font-size:10px;padding:1px 6px">${tm.label}</span>
-          <span class="chip ${platMeta(c.platform).cls}" style="font-size:10px;padding:1px 6px">${esc(c.platform)}</span></div></td>
+          <span class="chip ${platMeta(c.platform).cls}" style="font-size:10px;padding:1px 6px">${esc(c.platform)}</span>
+          ${ctChip(c.contentType,true)}</div></td>
       <td><div class="t-name" style="font-weight:500">${esc(c.campName)}</div>
         ${c.month?`<div class="muted" style="font-size:10.5px;margin-top:2px">${esc(c.month)}${c.brand?' · '+esc(c.brand):''}</div>`:''}</td>
       <td class="num">${fmtK(c.follower)}</td>
@@ -939,9 +950,9 @@ function drawCreatorChart(top){
 }
 
 function exportCreators(){
-  const rows=[['Member ID','Creator','ลิงก์งาน','แคมเปญ','เดือน','Platform','Tier','Follower','Views','Engagement','ER% (Eng/View)','Budget','CPV','CPE','ประเมิน']];
+  const rows=[['Member ID','Creator','ลิงก์งาน','แคมเปญ','เดือน','Platform','ประเภทงาน','Tier','Follower','Views','Engagement','ER% (Eng/View)','Budget','CPV','CPE','ประเมิน']];
   creatorList().forEach(c=>{
-    rows.push([c.memberId||'',c.name,c.link||'',c.campName,c.month,c.platform,c.tier,Math.round(c.follower),
+    rows.push([c.memberId||'',c.name,c.link||'',c.campName,c.month,c.platform,c.contentType||'',c.tier,Math.round(c.follower),
       c.views,c.eng,isFinite(c.er)?c.er.toFixed(2):'',c.budget,
       isFinite(c.cpv)?c.cpv.toFixed(2):'',isFinite(c.cpc)?c.cpc.toFixed(2):'',RATE_META[c.rate].t]);
   });
@@ -1312,7 +1323,8 @@ function detailKol(c,m){
       <td><div class="t-name">${nameHtml}</div>
         <div style="display:flex;gap:4px;margin-top:3px;flex-wrap:wrap">
           <span class="chip ${tm.k.toLowerCase()}" style="font-size:10px;padding:1px 6px">${tm.label}</span>
-          <span class="chip ${kt==='KOC Seeding'?'seed':'ot'}" style="font-size:10px;padding:1px 6px">${esc(kt)}</span></div></td>
+          <span class="chip ${kt==='KOC Seeding'?'seed':'ot'}" style="font-size:10px;padding:1px 6px">${esc(kt)}</span>
+          ${ctChip(k.contentType,true)}</div></td>
       <td><span class="chip ${pm.cls}">${esc(pm.k)}</span></td>
       <td><span class="chip ${py.cls}">${esc(py.short)}</span></td>
       <td class="num">${baht(k.budget)}</td>
